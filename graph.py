@@ -49,14 +49,16 @@ class Graph():
     '''初始化图类，顶点'''
     def __init__(self):
         self.neighbors_nodes = {}
+        self.nodes = []
 
     def add_node(self, node):
         self.neighbors_nodes[node] = []
-
+        self.nodes.append(node)
     def add_nodes(self, nodes):
         for node in nodes:
             if node not in self.neighbors_nodes:
                 self.neighbors_nodes[node] = []
+                self.nodes.append(node)
 
     def print_graph(self):
         for (key, value) in self.neighbors_nodes.iteritems():
@@ -69,7 +71,7 @@ class Graph():
             if u not in self.neighbors_nodes[v]:
                 self.neighbors_nodes[v].append(u)
 
-    def depth_first_search(self, root=None):
+    def depth_first_search(self , root=None):
         '''从root结点深度优先遍历图'''
         def dfs(node):
             if node.color == 1:
@@ -120,6 +122,41 @@ class Graph():
                     self.find_path(temp_node, end_node, path, all_path)
                     path.pop()
 
+    def color_by_dfs(self, root=None):
+        '''通过深度优先搜索着色'''
+        '''记录已经使用颜色数'''
+        def dfs(root, color_all, node_color_num, nodes_len, color_did):
+            '''root可以着色方案有color_all'''
+            for color in range(color_all):
+                b_color = True
+                for temp_node in self.neighbors_nodes[root]:
+                    if temp_node.el == color:
+                        b_color = False
+                        break
+                if b_color:
+                    '''说明颜色符合要求'''
+                    root.el = color
+                elif color == color_all-1:
+                    root.el = color_all
+                    color_all += 1
+                else:
+                    continue
+                node_color_num += 1
+                if node_color_num == nodes_len:
+                    '''说明已经全部着色'''
+                        color_did.append([node.el for node in self.nodes])
+                for temp_node in self.neighbors_nodes[root]:
+                    if temp_node.el == -1:
+                        dfs(temp_node, color_all, node_color_num, nodes_len)
+
+
+
+
+
+        color_all = 1
+
+
+
 if __name__ == '__main__':
     # test(graph)
     graph1 = Graph()
@@ -139,7 +176,7 @@ if __name__ == '__main__':
     # graph1.print_graph()
     # graph1.depth_first_search()
     path, all_path = [], []
-    # graph1.breath_first_search(nodes[0])
+    graph1.breath_first_search(nodes[0])
     graph1.find_path(nodes[7], nodes[6], path, all_path)
     for path in all_path:
         print [node.el for node in path]

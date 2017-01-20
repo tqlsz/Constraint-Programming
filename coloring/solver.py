@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 import sys
 sys.path.append('..')
-from graph import *
+# from graph import *
+import graph
 
 
 def solve_it(input_data):
@@ -14,16 +15,20 @@ def solve_it(input_data):
     first_line = lines[0].split()
     node_count = int(first_line[0])
     edge_count = int(first_line[1])
-    g = Graph()
-    nodes = [Node(i) for i in range(node_count)]
+    g = graph.Graph()
+    nodes = [graph.Node(i) for i in range(node_count)]
     g.add_nodes(nodes)
     edges = []
     for i in range(1, edge_count + 1):
         line = lines[i]
         parts = line.split()
         edges.append((int(parts[0]), int(parts[1])))
-        g.add_edge((Node(int(parts[0])), Node(int(parts[1]))))
-        g.print_graph()
+        g.add_edge((nodes[int(parts[0])], nodes[int(parts[1])]))
+
+    # g.print_graph()
+    # g.depth_first_search(nodes[0])
+    print 'dsfsdfsd'
+    g.breath_first_search(nodes[0])
 
     # build a trivial solution
     # every node has its own color
@@ -36,8 +41,6 @@ def solve_it(input_data):
     return output_data
 
 
-import sys
-
 if __name__ == '__main__':
     import sys
     if len(sys.argv) > 1:
@@ -47,4 +50,3 @@ if __name__ == '__main__':
         print(solve_it(input_data))
     else:
         print('This test requires an input file.  Please select one from the data directory. (i.e. python solver.py ./data/gc_4_1)')
-
