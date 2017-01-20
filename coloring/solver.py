@@ -1,5 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+import sys
+sys.path.append('..')
+from graph import *
 
 
 def solve_it(input_data):
@@ -11,13 +14,16 @@ def solve_it(input_data):
     first_line = lines[0].split()
     node_count = int(first_line[0])
     edge_count = int(first_line[1])
-
+    g = Graph()
+    nodes = [Node(i) for i in range(node_count)]
+    g.add_nodes(nodes)
     edges = []
     for i in range(1, edge_count + 1):
         line = lines[i]
         parts = line.split()
         edges.append((int(parts[0]), int(parts[1])))
-    print edges
+        g.add_edge((Node(int(parts[0])), Node(int(parts[1]))))
+        g.print_graph()
 
     # build a trivial solution
     # every node has its own color

@@ -31,13 +31,10 @@ def find_path(graph, start, end, path, all_path):
     path.pop()
 
 
-def test():
-    a = [1, 2, 3]
-    b = []
-    b.append(a)
-    print a, b
-    a[0] = 3
-    print a, b
+def test(graph):
+    path, all_path = [], []
+    find_path(graph, 'a', 'f', path, all_path)
+    print all_path
 
 
 class Node():
@@ -109,8 +106,22 @@ class Graph():
             if node.color == 0:
                 bfs(node)
 
+    def find_path(self, start_node, end_node, path, all_path):
+        '''start_node是个key,path保存路径，all_path保存所有路径'''
+        if start_node not in self.neighbors_nodes:
+            return None
+        path.append(start_node)
+        if start_node == end_node:
+            '''到了结尾'''
+            all_path.append(copy.deepcopy(path))
+        else:
+            for temp_node in self.neighbors_nodes[start_node]:
+                if temp_node not in path:
+                    self.find_path(temp_node, end_node, path, all_path)
+                    path.pop()
 
 if __name__ == '__main__':
+    # test(graph)
     graph1 = Graph()
     nodes = [Node(i+1) for i in range(10)]
     graph1.add_nodes(nodes)
@@ -127,5 +138,8 @@ if __name__ == '__main__':
     graph1.add_edge((nodes[8], nodes[9]))
     # graph1.print_graph()
     # graph1.depth_first_search()
-    graph1.breath_first_search(nodes[0])
-    '''test'''
+    path, all_path = [], []
+    # graph1.breath_first_search(nodes[0])
+    graph1.find_path(nodes[7], nodes[6], path, all_path)
+    for path in all_path:
+        print [node.el for node in path]
