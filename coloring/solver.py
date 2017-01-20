@@ -17,6 +17,7 @@ def solve_it(input_data):
         line = lines[i]
         parts = line.split()
         edges.append((int(parts[0]), int(parts[1])))
+    print edges
 
     # build a trivial solution
     # every node has its own color
