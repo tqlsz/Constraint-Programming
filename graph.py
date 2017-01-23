@@ -41,7 +41,7 @@ class Node():
     '''结点类'''
     def __init__(self, el=0):
         self.el = el
-        self.color = 0
+        self.color = -1
 
 
 class Graph():
@@ -51,7 +51,7 @@ class Graph():
         self.neighbors_nodes = {}
         self.nodes = []
         '''已经使用的颜色个数'''
-        self.color_all = 1
+        self.color_all = 0
         '''已经着色的节点数'''
         self.node_color_num = 0
         self.color_did = []
@@ -134,53 +134,65 @@ class Graph():
 
     def dfs_color(self, root):
         '''root可以着色方案有color_all种'''
-        for color in range(self.color_all):
+        node_color_num = self.node_color_num
+        for color in range(self.color_all+1):
             b_color = True
-            for temp_node in self.neighbors_nodes[root]:
-                '''通过root相邻节点的着色，判断color是否合适'''
-                if temp_node.el == color:
-                    b_color = False
-                    break
+            if color != self.color_all:
+                for temp_node in self.neighbors_nodes[root]:
+                    '''通过root相邻节点的着色，判断color是否合适'''
+                    if temp_node.color == color:
+                        b_color = False
+                        break
+            else:
+                self.color_all += 1
             if b_color:
                 '''说明颜色符合要求'''
-                root.el = color
+                root.color = color
                 self.node_color_num += 1
-                if self.node_color_num == nodes_len:
+                if self.color_all >= self.color_min:
+                    return
+                if self.node_color_num == self.get_nodes_len():
                     '''说明已经全部着色'''
-                    self.color_did.append([node.el for node in self.nodes])
+                    self.color_min = self.color_all
+                    self.color_did = [node.color for node in self.nodes]
+                    print self.color_did
+                    return
                 else:
                     '''对邻节点进行着色'''
                     for temp_node in self.neighbors_nodes[root]:
-                        if temp_node.el == -1:
+                        if temp_node.color == -1:
                             self.dfs_color(temp_node)
-                            temp_node.el = -1
-    def color_by_dfs(self, root=None):
-        '''通过深度优先搜索着色'''
-        '''记录已经使用颜色数'''
-            '''增加一种颜色着色情况'''
-            root.el = color_all
-            if node_color_num+1 == nodes_len:
-                color_did.append([node.el for node in self.nodes])
-                return
+                            temp_node.color = -1
+            self.node_color_num = node_color_num
+
+    def color_by_dfs(self, i=0, temp_color_all=0):
+        '''遍历节点'''
+        temp_color_all
+        for color in range(temp_color_all+1):
+            b_color = True
+            '''判断颜色是否符合要求'''
+            if color != temp_color_all:
+                for node in self.neighbors_nodes[self.nodes[i]]:
+                    if node.el-1 < i and node.color == color:
+                        b_color = False
+                        break
             else:
-                '''对邻节点进行着色'''
-                for temp_node in self.neighbors_nodes[root]:
-                    if temp_node.el == -1:
-                        dfs(temp_node, color_all+1, node_color_num+1, nodes_len)
-
-
-                    continue
-                for temp_node in self.neighbors_nodes[root]:
-                    if temp_node.el == -1:
-                        dfs(temp_node, color_all, node_color_num, nodes_len)
-                        temp_node.el = 1
-        if root:
-            color_all = 1
-            node_color_num = 0
-            nodes_len = len(self.nodes)
-            color_did = []
-            dfs(root, color_all, node_color_num, nodes_len, color_did)
-            return color_did
+                temp_color_all += 1
+            if b_color:
+                '''说明颜色符合要求'''
+                print i, temp_color_all
+                if temp_color_all >= self.color_min:
+                    return
+                self.nodes[i].color = color
+                if i == self.get_nodes_len()-1:
+                    self.color_min = temp_color_all
+                    self.color_did = [node.color for node in self.nodes]
+                    print self.color_min
+                    '''着色完毕'''
+                    return
+                else:
+                    self.color_by_dfs(i+1, temp_color_all)
+            # self.color_all = temp_color_all
 
 
 if __name__ == '__main__':
@@ -199,6 +211,9 @@ if __name__ == '__main__':
     graph1.add_edge((nodes[2], nodes[6]))
     graph1.add_edge((nodes[5], nodes[6]))
     graph1.add_edge((nodes[8], nodes[9]))
+    graph1.color_by_dfs(0, 0)
+    print graph1.color_min
+    print graph1.color_did
     # graph1.print_graph()
     # graph1.depth_first_search()
 

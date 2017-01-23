@@ -16,7 +16,7 @@ def solve_it(input_data):
     node_count = int(first_line[0])
     edge_count = int(first_line[1])
     g = graph.Graph()
-    nodes = [graph.Node(i) for i in range(node_count)]
+    nodes = [graph.Node(i+1) for i in range(node_count)]
     g.add_nodes(nodes)
     edges = []
     for i in range(1, edge_count + 1):
@@ -24,18 +24,19 @@ def solve_it(input_data):
         parts = line.split()
         edges.append((int(parts[0]), int(parts[1])))
         g.add_edge((nodes[int(parts[0])], nodes[int(parts[1])]))
-
+    g.color_by_dfs(0, 0)
+    solution = g.color_did
+    node_count = g.color_min
     # g.print_graph()
     # g.depth_first_search(nodes[0])
-    print 'dsfsdfsd'
-    g.breath_first_search(nodes[0])
+    # g.breath_first_search(nodes[0])
 
     # build a trivial solution
     # every node has its own color
-    solution = range(0, node_count)
+    # solution = range(0, node_count)
 
     # prepare the solution in the specified output format
-    output_data = str(node_count) + ' ' + str(0) + '\n'
+    output_data = str(node_count) + ' ' + str(1) + '\n'
     output_data += ' '.join(map(str, solution))
 
     return output_data
