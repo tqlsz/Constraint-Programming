@@ -50,10 +50,20 @@ class Graph():
     def __init__(self):
         self.neighbors_nodes = {}
         self.nodes = []
+        '''已经使用的颜色个数'''
+        self.color_all = 1
+        '''已经着色的节点数'''
+        self.node_color_num = 0
+        self.color_did = []
+        self.color_min = 10000
+
+    def get_nodes_len(self):
+        return len(self.nodes)
 
     def add_node(self, node):
         self.neighbors_nodes[node] = []
         self.nodes.append(node)
+
     def add_nodes(self, nodes):
         for node in nodes:
             if node not in self.neighbors_nodes:
@@ -71,7 +81,7 @@ class Graph():
             if u not in self.neighbors_nodes[v]:
                 self.neighbors_nodes[v].append(u)
 
-    def depth_first_search(self , root=None):
+    def depth_first_search(self, root=None):
         '''从root结点深度优先遍历图'''
         def dfs(node):
             if node.color == 1:
@@ -122,39 +132,55 @@ class Graph():
                     self.find_path(temp_node, end_node, path, all_path)
                     path.pop()
 
+    def dfs_color(self, root):
+        '''root可以着色方案有color_all种'''
+        for color in range(self.color_all):
+            b_color = True
+            for temp_node in self.neighbors_nodes[root]:
+                '''通过root相邻节点的着色，判断color是否合适'''
+                if temp_node.el == color:
+                    b_color = False
+                    break
+            if b_color:
+                '''说明颜色符合要求'''
+                root.el = color
+                self.node_color_num += 1
+                if self.node_color_num == nodes_len:
+                    '''说明已经全部着色'''
+                    self.color_did.append([node.el for node in self.nodes])
+                else:
+                    '''对邻节点进行着色'''
+                    for temp_node in self.neighbors_nodes[root]:
+                        if temp_node.el == -1:
+                            self.dfs_color(temp_node)
+                            temp_node.el = -1
     def color_by_dfs(self, root=None):
         '''通过深度优先搜索着色'''
         '''记录已经使用颜色数'''
-        def dfs(root, color_all, node_color_num, nodes_len, color_did):
-            '''root可以着色方案有color_all'''
-            for color in range(color_all):
-                b_color = True
+            '''增加一种颜色着色情况'''
+            root.el = color_all
+            if node_color_num+1 == nodes_len:
+                color_did.append([node.el for node in self.nodes])
+                return
+            else:
+                '''对邻节点进行着色'''
                 for temp_node in self.neighbors_nodes[root]:
-                    if temp_node.el == color:
-                        b_color = False
-                        break
-                if b_color:
-                    '''说明颜色符合要求'''
-                    root.el = color
-                elif color == color_all-1:
-                    root.el = color_all
-                    color_all += 1
-                else:
+                    if temp_node.el == -1:
+                        dfs(temp_node, color_all+1, node_color_num+1, nodes_len)
+
+
                     continue
-                node_color_num += 1
-                if node_color_num == nodes_len:
-                    '''说明已经全部着色'''
-                        color_did.append([node.el for node in self.nodes])
                 for temp_node in self.neighbors_nodes[root]:
                     if temp_node.el == -1:
                         dfs(temp_node, color_all, node_color_num, nodes_len)
-
-
-
-
-
-        color_all = 1
-
+                        temp_node.el = 1
+        if root:
+            color_all = 1
+            node_color_num = 0
+            nodes_len = len(self.nodes)
+            color_did = []
+            dfs(root, color_all, node_color_num, nodes_len, color_did)
+            return color_did
 
 
 if __name__ == '__main__':
@@ -175,8 +201,4 @@ if __name__ == '__main__':
     graph1.add_edge((nodes[8], nodes[9]))
     # graph1.print_graph()
     # graph1.depth_first_search()
-    path, all_path = [], []
-    graph1.breath_first_search(nodes[0])
-    graph1.find_path(nodes[7], nodes[6], path, all_path)
-    for path in all_path:
-        print [node.el for node in path]
+
