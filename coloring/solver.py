@@ -24,7 +24,8 @@ def solve_it(input_data):
         parts = line.split()
         edges.append((int(parts[0]), int(parts[1])))
         g.add_edge((nodes[int(parts[0])], nodes[int(parts[1])]))
-    g.color_by_dfs(0, 0)
+    g.color_by_geedy(0)
+    # g.color_by_dfs(0, 0)
     solution = g.color_did
     node_count = g.color_min
     # g.print_graph()

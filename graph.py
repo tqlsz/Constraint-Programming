@@ -80,6 +80,7 @@ class Graph():
             self.neighbors_nodes[u].append(v)
             if u not in self.neighbors_nodes[v]:
                 self.neighbors_nodes[v].append(u)
+        self.sort_dic = sorted(self.neighbors_nodes.iteritems(), key=lambda asd: len(asd[1]), reverse=True)
 
     def depth_first_search(self, root=None):
         '''从root结点深度优先遍历图'''
@@ -155,7 +156,6 @@ class Graph():
                     '''说明已经全部着色'''
                     self.color_min = self.color_all
                     self.color_did = [node.color for node in self.nodes]
-                    print self.color_did
                     return
                 else:
                     '''对邻节点进行着色'''
@@ -180,19 +180,38 @@ class Graph():
                 temp_color_all += 1
             if b_color:
                 '''说明颜色符合要求'''
-                print i, temp_color_all
+                # print i, temp_color_all
                 if temp_color_all >= self.color_min:
-                    return
+                    return False
                 self.nodes[i].color = color
                 if i == self.get_nodes_len()-1:
                     self.color_min = temp_color_all
                     self.color_did = [node.color for node in self.nodes]
                     print self.color_min
                     '''着色完毕'''
-                    return
+                    return True
                 else:
                     self.color_by_dfs(i+1, temp_color_all)
             # self.color_all = temp_color_all
+
+    def color_by_geedy(self, i=0):
+        '''贪心算法:使用一种颜色对尽可能多节点着色'''
+        for node in self.sort_dic:
+            if node[0].color != -1:
+                continue
+            b_color = True
+            for temp_node in node[1]:
+                if temp_node.color == i:
+                    b_color = False
+                    break
+            if b_color:
+                node[0].color = i
+                self.node_color_num += 1
+                if self.node_color_num == self.get_nodes_len():
+                    self.color_did = [node.color for node in self.nodes]
+                    self.color_min = i+1
+                    return
+        self.color_by_geedy(i+1)
 
 
 if __name__ == '__main__':
@@ -211,9 +230,11 @@ if __name__ == '__main__':
     graph1.add_edge((nodes[2], nodes[6]))
     graph1.add_edge((nodes[5], nodes[6]))
     graph1.add_edge((nodes[8], nodes[9]))
-    graph1.color_by_dfs(0, 0)
+    # graph1.print_graph()
+
+    graph1.color_by_geedy(0)
+    # graph1.color_by_dfs(0, 0)
     print graph1.color_min
     print graph1.color_did
     # graph1.print_graph()
     # graph1.depth_first_search()
-
